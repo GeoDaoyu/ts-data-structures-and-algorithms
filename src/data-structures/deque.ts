@@ -1,32 +1,61 @@
-class Queue {
+// 双端队列
+// 双端队列允许在两端添加和移除元素
+
+class Deque {
   private elements = new Array();
 
   constructor() {}
 
   /**
-   * 进队列
-   * @param elements 进队列元素或进队列元素数组
+   * 进队列 从列头
+   * @param element 进队列元素
    * @returns {number} 进队列后的队列长度
    */
-  enqueue(...elements) {
-    return this.elements.push(...elements);
+  unshift(element) {
+    return this.elements.unshift(element);
+  }
+
+  /**
+   * 进队列 从列尾
+   * @param element 进队列元素
+   * @returns {number} 进队列后的队列长度
+   */
+  push(element) {
+    return this.elements.push(element);
   }
 
   /**
    * 移除队列列头的元素
    * @returns {T} 队列列头的元素
    */
-  dequeue() {
+  shift() {
     return this.elements.shift();
+  }
+
+  /**
+   * 移除队列列尾的元素
+   * @returns {T} 队列列尾的元素
+   */
+  pop() {
+    return this.elements.pop();
   }
 
   /**
    * 获取队列列头元素，但不出队列
    * @returns {T} 队列列头元素
    */
-  peek() {
+  head() {
     // @ts-ignore
     return this.elements.at(0);
+  }
+
+  /**
+   * 获取队列列尾元素，但不出队列
+   * @returns {T} 队列列头元素
+   */
+   tail() {
+    // @ts-ignore
+    return this.elements.at(-1);
   }
 
   /**
@@ -61,4 +90,4 @@ class Queue {
   }
 }
 
-export default Queue;
+export default Deque;

@@ -1,17 +1,17 @@
-import Stack from './stack';
+import Stack from "./stack";
 // 单调栈就是栈里面存放的数据都是有序的，所以可以分为单调递增栈和单调递减栈两种。
 
 // 单调递增栈就是从栈底到栈顶是从大到小 [3,2,1]
-// (a: number, b: number) => a - b <= 0)
+// (a: number, b: number) => a <= b)
 // 单调递减栈就是从栈底到栈顶是从小到大 [1,2,3]
-// (a: number, b: number) => a - b >= 0)
+// (a: number, b: number) => a >= b)
 
 class MonotonicStack extends Stack {
-  private compare: (...args: any) => boolean;
+  private comparator;
 
-  constructor(compare = (a: number, b: number) => a - b >= 0) {
+  constructor(comparator = (a: number, b: number) => a - b <= 0) {
     super();
-    this.compare = compare;
+    this.comparator = comparator;
   }
 
   /**
@@ -21,7 +21,7 @@ class MonotonicStack extends Stack {
    */
   push(element) {
     const top = this.peek();
-    if (this.isEmpty() || this.compare(element, top)) {
+    if (this.isEmpty() || this.comparator(element, top)) {
       return super.push(element);
     } else {
       this.pop();
