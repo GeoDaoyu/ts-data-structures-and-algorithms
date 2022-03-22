@@ -1,4 +1,4 @@
-class Queue {
+export default class Queue {
   private elements = new Array();
 
   constructor() {}
@@ -39,7 +39,7 @@ class Queue {
 
   /**
    * 判断队列是否为空
-   * @returns {boolean}
+   * @returns {boolean} 是 或 否
    */
   isEmpty() {
     return this.elements.length === 0;
@@ -60,5 +60,3 @@ class Queue {
     return this.elements.toString();
   }
 }
-
-export default Queue;

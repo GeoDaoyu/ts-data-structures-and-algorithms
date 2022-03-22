@@ -1,4 +1,4 @@
-class Stack {
+export default class Stack {
   private elements = new Array();
 
   constructor() {}
@@ -39,7 +39,7 @@ class Stack {
 
   /**
    * 判断栈是否为空
-   * @returns {boolean}
+   * @returns {boolean} 是 或 否
    */
   isEmpty() {
     return this.elements.length === 0;
@@ -60,5 +60,3 @@ class Stack {
     return this.elements.toString();
   }
 }
-
-export default Stack;
