@@ -123,6 +123,42 @@ export class LinkedList {
   }
 
   /**
+   * 返回数组中满足提供的测试函数的第一个节点。否则返回 undefined。
+   * @param callback 测试函数
+   * @returns {LinkedListNode} 节点 或 undefined
+   */
+  find(callback) {
+    let curr = this.head;
+    let index = 0;
+    while (curr) {
+      if (callback(curr.value, index)) {
+        return curr;
+      }
+      index++;
+      curr = curr.next;
+    }
+    return undefined;
+  }
+
+  /**
+   * 返回数组中满足提供的测试函数的第一个节点的索引。否则返回 -1。
+   * @param callback 测试函数
+   * @returns {number} 索引 或 -1
+   */
+  findIndex(callback) {
+    let curr = this.head;
+    let index = 0;
+    while (curr) {
+      if (callback(curr.value, index)) {
+        return index;
+      }
+      index++;
+      curr = curr.next;
+    }
+    return -1;
+  }
+
+  /**
    * 从链表中移除指定元素
    * @param value 元素值
    * @returns 当前链表
