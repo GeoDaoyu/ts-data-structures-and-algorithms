@@ -78,6 +78,10 @@ export class BinarySearchTree {
     }
   }
 
+  /**
+   * 层序遍历 generator函数
+   * @param node 节点
+   */
   *levelOrderTraverse(node: TreeNode | null) {
     if (node) {
       const queue = [node];
@@ -153,12 +157,23 @@ export class BinarySearchTree {
     }
   }
 
+  /**
+   * 根据目标值删除树中的节点
+   * @param value 目标值
+   * @returns 
+   */
   remove(value) {
     const root = this.removeNode(this.root, value);
     return root;
   }
 
-  removeNode(node, value) {
+  /**
+   * 根据目标值删除节点
+   * @param node 父节点
+   * @param value 要删除的节点的值
+   * @returns {TreeNode | null}
+   */
+  removeNode(node, value): TreeNode | null {
     if (node === null) {
       return null;
     }
@@ -191,7 +206,13 @@ export class BinarySearchTree {
       return node;
     }
   }
-  findMinNode(node) {
+
+  /**
+   * 辅助函数，查找最小值的节点
+   * @param node 父节点
+   * @returns {TreeNode}
+   */
+  findMinNode(node: TreeNode): TreeNode {
     while (node && node.left) {
       node = node.left;
     }
