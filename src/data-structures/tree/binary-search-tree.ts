@@ -14,39 +14,36 @@ export class BinarySearchTree {
   constructor() {
     this.root = null;
   }
-  /**
-   * 插入节点
-   * @param value 节点的值
-   * @param node 当前节点，默认值根节点
-   */
-  insert(value, node = this.root) {
-    const newNode = new TreeNode(value);
-    // 当根节点没有值时
-    if (node === null) {
-      this.root = newNode;
-      return;
+
+  insert(value: number): void {
+    const node = new TreeNode(value);
+    if (this.root === null) {
+      this.root = node;
+    } else {
+      // 往树中插入节点
+      this.insertNode(node, this.root);
     }
-    // 比较节点值，选择左边还是右边
-    if (value <= node.value) {
+  }
+
+  insertNode(newNode: TreeNode, node: TreeNode): void {
+    if (newNode.value < node.value) {
+      // 往左侧插入
       if (node.left) {
-        this.insert(value, node.left);
+        this.insertNode(newNode, node.left);
       } else {
         node.left = newNode;
       }
     } else {
+      // 往右侧插入
       if (node.right) {
-        this.insert(value, node.right);
+        this.insertNode(newNode, node.right);
       } else {
         node.right = newNode;
       }
     }
   }
 
-  /**
-   * 中序遍历 generator函数
-   * @param node 节点
-   */
-  *inOrderTraverse(node: TreeNode | null) {
+  *inOrderTraverse(node: TreeNode | null): Generator<number> {
     if (node) {
       yield* this.inOrderTraverse(node.left);
       yield node.value;
@@ -54,192 +51,229 @@ export class BinarySearchTree {
     }
   }
 
-  /**
-   * 前序遍历 generator函数
-   * @param node 节点
-   */
-  *preOrderTraverse(node: TreeNode | null) {
+  *preOrderTraverse(node: TreeNode | null): Generator<number> {
     if (node) {
-      yield* this.preOrderTraverse(node.left);
       yield node.value;
+      yield* this.preOrderTraverse(node.left);
       yield* this.preOrderTraverse(node.right);
     }
   }
 
-  /**
-   * 后序遍历 generator函数
-   * @param node 节点
-   */
-  *postOrderTraverse(node: TreeNode | null) {
+  *postOrderTraverse(node: TreeNode | null): Generator<number> {
     if (node) {
       yield* this.postOrderTraverse(node.left);
-      yield node.value;
       yield* this.postOrderTraverse(node.right);
+      yield node.value;
     }
   }
 
-  /**
-   * 层序遍历 generator函数
-   * @param node 节点
-   */
-  *levelOrderTraverse(node: TreeNode | null) {
-    if (node) {
-      const queue = [node];
-      while (queue.length) {
-        const cur = queue.shift();
-        yield cur?.value;
-        if (cur?.left) queue.push(cur.left);
-        if (cur?.right) queue.push(cur.right);
-      }
-    }
-  }
-
-  *levelOrderTraverseWith2D(node: TreeNode | null) {
-    if (node) {
-      const queue = [node];
-      while (queue.length) {
-        const n = queue.length;
-        const level: Array<number | undefined> = [];
-        for (let i = 0; i < n; i++) {
-          const cur = queue.shift();
-          level.push(cur?.value);
-          if (cur?.left) queue.push(cur.left);
-          if (cur?.right) queue.push(cur.right);
-        }
-        yield level;
-      }
-    }
-  }
-  /**
-   * 打印函数
-   * @param traverse 遍历器
-   */
-  print(traverse: Function) {
-    const iterator = traverse.call(this, this.root);
-    const output = Array.from(iterator);
+  print(fn: Function): void {
+    const iterator = fn.call(this, this.root);
+    const output: number[] = Array.from(iterator);
     console.log(output);
   }
 
-  /**
-   * 求BST的最小值
-   * @param node 节点
-   * @returns
-   */
-  min(node: TreeNode | null = this.root) {
-    return node?.left ? this.min(node.left) : node?.value;
+  min(): number | null {
+    const root = this.root;
+    if (root === null) return null;
+    const node = this.minNode(root);
+    return node.value;
   }
 
-  /**
-   * 求BST的最大值
-   * @param node 节点
-   * @returns
-   */
-  max(node: TreeNode | null = this.root) {
-    return node?.right ? this.max(node.right) : node?.value;
-  }
-
-  /**
-   * 是否包含目标值
-   * @param value 目标值
-   * @param node 当前节点，默认值根节点
-   * @returns {boolean} 是否
-   */
-  has(value, node = this.root) {
-    if (!node) return false;
-    const map = [
-      [(v) => v < 0, this.has(value, node.left)], // 比当前值小，往左边查找
-      [(v) => v === 0, true], // 找到目标值
-      [(v) => v > 0, this.has(value, node.right)], // 比当前值大，往右边查找
-    ];
-    for (let [fn, result] of map) {
-      const dif = value - node.value;
-      if (fn(dif)) return result;
-    }
-  }
-
-  /**
-   * 根据目标值删除树中的节点
-   * @param value 目标值
-   * @returns 
-   */
-  remove(value) {
-    const root = this.removeNode(this.root, value);
-    return root;
-  }
-
-  /**
-   * 根据目标值删除节点
-   * @param node 父节点
-   * @param value 要删除的节点的值
-   * @returns {TreeNode | null}
-   */
-  removeNode(node, value): TreeNode | null {
-    if (node === null) {
-      return null;
-    }
-    // 查找要删除的节点是在左还是右
-    if (value < node.value) {
-      node.left = this.removeNode(node.left, value);
-      return node;
-    } else if (value > node.value) {
-      node.right = this.removeNode(node.right, value);
-      return node;
+  minNode(node: TreeNode): TreeNode {
+    if (node.left) {
+      return this.minNode(node.left);
     } else {
-      // 值等于node的值
-      // 第一种情况：一个叶子节点
-      if (node.left === null && node.right === null) {
-        node = null;
-        return node;
-      }
-      // 第二种情况：只有一个子节点的节点
-      if (node.left === null) {
-        node = node.right;
-        return node;
-      } else if (node.right === null) {
-        node = node.left;
-        return node;
-      }
-      // 第三种情况：一个有两个子节点的节点
-      const aux = this.findMinNode(node.right);
-      node.value = aux.value;
-      node.right = this.removeNode(node.right, aux.value);
       return node;
     }
   }
 
-  /**
-   * 辅助函数，查找最小值的节点
-   * @param node 父节点
-   * @returns {TreeNode}
-   */
-  findMinNode(node: TreeNode): TreeNode {
-    while (node && node.left) {
-      node = node.left;
+  max(): number | null {
+    const root = this.root;
+    if (root === null) return null;
+    const node = this.maxNode(root);
+    return node.value;
+  }
+
+  maxNode(node: TreeNode): TreeNode {
+    if (node.right) {
+      return this.maxNode(node.right);
+    } else {
+      return node;
     }
-    return node;
+  }
+
+  has(value: number): boolean {
+    const root = this.root;
+    if (root === null) {
+      return false;
+    } else {
+      return this.hasNode(root, value);
+    }
+  }
+
+  hasNode(node: TreeNode, value: number): boolean {
+    if (node.value === value) {
+      return true;
+    }
+    if (value < node.value) {
+      if (node.left) {
+        return this.hasNode(node.left, value);
+      } else {
+        return false;
+      }
+    } else {
+      if (node.right) {
+        return this.hasNode(node.right, value);
+      } else {
+        return false;
+      }
+    }
+  }
+
+  remove(value: number): void {
+    const root = this.root;
+    if (root === null) {
+      return;
+    }
+    // 先找到目标值的节点
+    const [parent, node] = this.findNode(null, root, value);
+    if (node === null) {
+      return;
+    }
+    // 删除这个节点
+    if (!node.left && !node.right) {
+      // 没有子节点
+      this.removeEmptyNode(parent, node);
+    } else if (node.left && node.right) {
+      // 有两个子节点
+      this.removeFullNode(node);
+    } else {
+      // 只有一个子节点
+      this.removeHalfNode(parent, node);
+    }
+  }
+
+  /**
+   * 删除节点的辅助函数，通过目标值来寻找节点和节点的父节点
+   * @param parent 当前节点的父节点
+   * @param node 当前要搜寻的节点
+   * @param value 目标值
+   * @returns 一个数组，数组第一位是父节点，第二位是目标值的节点
+   */
+  findNode(
+    parent: TreeNode | null,
+    node: TreeNode,
+    value: number
+  ): Array<TreeNode | null> {
+    if (node.value === value) {
+      return [parent, node];
+    }
+    if (value < node.value) {
+      if (node.left) {
+        return this.findNode(node, node.left, value);
+      } else {
+        return [node, null];
+      }
+    } else {
+      if (node.right) {
+        return this.findNode(node, node.right, value);
+      } else {
+        return [node, null];
+      }
+    }
+  }
+
+  findMinNode(parent: TreeNode, node: TreeNode): Array<TreeNode> {
+    if (node.left) {
+      return this.findMinNode(node, node.left);
+    } else {
+      return [parent, node];
+    }
+  }
+
+  removeEmptyNode(parent: TreeNode | null, node: TreeNode): void {
+    if (!parent) {
+      this.root = null;
+      return;
+    }
+    if (parent.left === node) {
+      parent.left = null;
+      return;
+    }
+    if (parent.right === node) {
+      parent.right = null;
+      return;
+    }
+  }
+
+  removeHalfNode(parent: TreeNode | null, node: TreeNode): void {
+    if (!parent) {
+      this.root = node.left || node.right;
+    }
+    if (node === parent?.left) {
+      parent.left = node.left || node.right;
+    }
+    if (node === parent?.right) {
+      parent.right = node.left || node.right;
+    }
+  }
+
+  removeFullNode(node: TreeNode): void {
+    // @ts-ignore
+    const [parent, minNode] = this.findMinNode(node, node.right);
+    const minValue = minNode.value;
+    node.value = minValue;
+    this.removeEmptyNode(parent, minNode);
+  }
+
+  *levelOrderTraverse(root: TreeNode | null): Generator<Array<number>> {
+    if (root) {
+      function* level(queue: Array<TreeNode>) {
+        // 取得当前层的节点的值的数组
+        const values = queue.map((node) => node.value);
+        yield values;
+        // 计算出下一层的节点
+        const nextQueue = queue.flatMap((node) => {
+          const children: Array<TreeNode> = [];
+          if (node.left) children.push(node.left);
+          if (node.right) children.push(node.right);
+          return children;
+        });
+        if (nextQueue.length) {
+          yield* level(nextQueue);
+        }
+      }
+      yield* level([root]);
+    }
   }
 }
-const b = new BinarySearchTree();
-// 插入数字与顺序与书本一样
-b.insert(11);
-b.insert(7);
-b.insert(15);
-b.insert(5);
-b.insert(3);
-b.insert(9);
-b.insert(8);
-b.insert(10);
-b.insert(13);
-b.insert(12);
-b.insert(14);
-b.insert(20);
-b.insert(18);
-b.insert(25);
-b.insert(6);
-b.print(b.inOrderTraverse);
-// console.log(b.min());
-// console.log(b.max());
-// console.log(b.has(15));
-// b.remove(14);
-b.print(b.levelOrderTraverse);
 
+const tree = new BinarySearchTree();
+// 插入数字与顺序与书本一样
+tree.insert(11);
+tree.insert(7);
+tree.insert(15);
+tree.insert(5);
+tree.insert(3);
+tree.insert(9);
+tree.insert(8);
+tree.insert(10);
+tree.insert(13);
+tree.insert(12);
+tree.insert(14);
+tree.insert(20);
+tree.insert(18);
+tree.insert(25);
+tree.insert(6);
+
+// console.log(tree.max());
+// console.log(tree.min());
+// console.log(tree.has(6));
+
+tree.print(tree.inOrderTraverse);
+// tree.remove(6);
+// tree.remove(5);
+// tree.remove(15);
+
+tree.print(tree.levelOrderTraverse);
