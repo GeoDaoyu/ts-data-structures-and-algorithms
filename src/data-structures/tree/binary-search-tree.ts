@@ -2,7 +2,7 @@ export class TreeNode {
   value: number;
   left: TreeNode | null;
   right: TreeNode | null;
-  constructor(value, left = null, right = null) {
+  constructor(value: number, left = null, right = null) {
     this.value = value;
     this.left = left;
     this.right = right;
@@ -229,7 +229,7 @@ export class BinarySearchTree {
 
   *levelOrderTraverse(root: TreeNode | null): Generator<Array<number>> {
     if (root) {
-      function* level(queue: Array<TreeNode>) {
+      function* levelRecursive(queue: Array<TreeNode>) {
         // 取得当前层的节点的值的数组
         const values = queue.map((node) => node.value);
         yield values;
@@ -241,10 +241,10 @@ export class BinarySearchTree {
           return children;
         });
         if (nextQueue.length) {
-          yield* level(nextQueue);
+          yield* levelRecursive(nextQueue);
         }
       }
-      yield* level([root]);
+      yield* levelRecursive([root]);
     }
   }
 }
