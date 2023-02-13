@@ -46,44 +46,44 @@ export default class MaxHeap {
   }
   heapifyDown(index: number): void {
     const parentIndex = index;
-    const childIndex = this.getMaxChildIndex(index);
-
+    const leftChildIndex = this.getLeftChildIndex(index);
+    const rightChildIndex = this.getRightChildIndex(index);
+    const childIndex = this.getMaxChildIndex(leftChildIndex, rightChildIndex);
     if (this.shouldSwap(parentIndex, childIndex)) {
       this.swap(parentIndex, childIndex);
       this.heapifyDown(childIndex);
     }
   }
-  getMaxChildIndex(index: number): number {
-    const leftChildIndex = this.getLeftChildIndex(index);
-    const rightChildIndex = this.getRightChildIndex(index);
+  getMaxChildIndex(leftChildIndex: number, rightChildIndex: number): number {
     if (
-      !this.isIndexValid(leftChildIndex) &&
-      !this.isIndexValid(rightChildIndex)
+      !this.isValidNode(leftChildIndex) &&
+      !this.isValidNode(rightChildIndex)
     ) {
       return -1;
     } else if (
-      this.isIndexValid(leftChildIndex) &&
-      this.isIndexValid(rightChildIndex)
+      this.isValidNode(leftChildIndex) &&
+      this.isValidNode(rightChildIndex)
     ) {
-      return this.heap[leftChildIndex] > this.heap[rightChildIndex]
+      return this.compareAt(leftChildIndex, rightChildIndex)
         ? leftChildIndex
         : rightChildIndex;
     } else {
       return leftChildIndex;
     }
   }
-  isIndexValid(index: number): boolean {
+  isValidNode(index: number): boolean {
     return index < this.size();
+  }
+  compareAt(i: number, j: number): boolean {
+    const heap = this.heap;
+    return heap[i] > heap[j];
   }
   shouldSwap(parentIndex: number, childIndex: number): boolean {
     // 上滤 已到顶
     if (childIndex === 0) return false;
     // 下滤 已到底
     if (childIndex === -1) return false;
-    const heap = this.heap;
-    const parent = heap[parentIndex];
-    const child = heap[childIndex];
-    return parent < child;
+    return !this.compareAt(parentIndex, childIndex);
   }
   swap(i: number, j: number) {
     const heap = this.heap;
