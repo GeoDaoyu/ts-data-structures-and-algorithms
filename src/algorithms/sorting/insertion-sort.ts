@@ -14,3 +14,5 @@ const insertSort = (array: number[]): number[] => {
 
 console.log(unsorted);
 console.log(insertSort(unsorted));
+
+export default insertSort;
