@@ -1,9 +1,8 @@
 type CompareFunction<T> = (a: T, b: T) => boolean;
 
-class Heap {
+export default class Heap {
   heap: Array<number>;
   compare: CompareFunction<number>;
-
   constructor(compare: CompareFunction<number>) {
     this.heap = [];
     this.compare = compare;
@@ -94,6 +93,10 @@ class Heap {
     const heap = this.heap;
     [heap[i], heap[j]] = [heap[j], heap[i]];
   }
+  print(): void {
+    const heap = this.heap;
+    console.log(heap);
+  }
   size(): number {
     return this.heap.length;
   }
@@ -102,16 +105,22 @@ class Heap {
   }
 }
 
-const unsorted = [4, 3, 2, 6, 3, 8, 5, 7];
-const heapSort = (array: number[]): number[] => {
-  const heap = new Heap((a: number, b: number) => a - b < 0);
-  array.forEach((v) => heap.push(v));
-  const sorted: number[] = [];
-  while (!heap.isEmpty()) {
-    sorted.push(heap.pop() as number);
-  }
-  return sorted;
-};
+const heap = new Heap((a: number, b: number) => a - b > 0);
+heap.push(1);
+heap.push(2);
+heap.push(6);
+heap.push(4);
+heap.push(8);
 
-console.log(unsorted);
-console.log(heapSort(unsorted));
+heap.print();
+
+// console.log(heap.peek());
+console.log(heap.pop());
+
+console.log(heap.pop());
+console.log(heap.pop());
+console.log(heap.pop());
+console.log(heap.pop());
+console.log(heap.pop());
+console.log(heap.pop());
+heap.print();
